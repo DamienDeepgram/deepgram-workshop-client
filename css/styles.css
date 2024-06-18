@@ -1,0 +1,147 @@
+body {
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.center-div {
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+}
+.animation{
+  width: 300px;
+  height: 300px;
+}
+canvas {
+  width: 100%;
+  height: 100%;
+  max-width: 350px;
+  max-height: 350px;
+  margin-bottom: 15%;
+}
+
+#startContainer {
+  text-align: center;
+  width: 400px;
+}
+
+#startContainer select {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+#startConversationBtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#startConversationBtn:hover {
+  background-color: #0056b3;
+}
+
+#startConversationBtn:disabled {
+  background-color: #b1b1b1;
+}
+
+#instructionsContainer {
+  text-align: center;
+  width: 400px;
+}
+
+#instructionsInput {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  font-size: 14px;
+}
+
+#updateInstructionsBtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#updateInstructionsBtn:hover {
+  background-color: #0056b3;
+}
+
+#buttonContainer {
+  justify-content: center;
+  gap: 20px;
+}
+label{
+  font-weight: bold;
+  font-size: 18px;
+}
+.circle-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #ddd;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.circle-button img {
+  width: 50%;
+  height: 50%;
+}
+
+.circle-button.selected {
+  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.5);
+}
+.no-bullets {
+  list-style-type: none; /* This removes the bullet points */
+  padding: 0; /* Optional: remove default padding */
+  padding-inline-start: 0px;
+}
+.button-title {
+  margin-top: 38%;
+  font-size: 12px;
+  font-weight: bold;
+}
+.total{
+  font-weight: bold;
+  font-size: 18px;
+}
+
+@media only screen and (max-width: 768px) {
+  #buttonContainer {
+    bottom: 150px;
+    gap: 10px;
+  }
+
+  #instructionsContainer {
+    bottom: 10px;
+    width: 350px;
+  }
+
+  #startContainer {
+    top: 10px;
+    width: 350px;
+  }
+
+  canvas {
+    margin-bottom: 50%;
+  }
+}
