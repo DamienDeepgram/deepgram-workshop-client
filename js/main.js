@@ -162,6 +162,16 @@ function updateInstructions(callback) {
     });
 }
 
+function updateMenu(){
+  let itemsDiv = document.querySelector('#items');
+  state.menu.items.forEach((item) => {
+    let itemLi = document.createElement('li');
+    itemLi.innerHTML = item.name + ' - $' + item.price;
+    itemLi.className = 'no-bullets items';
+    itemsDiv.appendChild(itemLi);
+});
+}
+
 function updateUI() {
   document.getElementById("startContainer").style.display = "none";
   document.getElementById("blobCanvas").style.display = "flex";
@@ -226,6 +236,8 @@ async function prepareDriveThruConfig() {
     let button = document.querySelector('#startConversationBtn');
     button.innerHTML = 'Start Conversation';
     button.removeAttribute('disabled');
+
+    updateMenu();
   } catch (error) {
     console.error("Config error:", error);
   }

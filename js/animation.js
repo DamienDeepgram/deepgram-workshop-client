@@ -24,18 +24,18 @@ function animateBlob() {
         centerY,
         baseSize
     );
-    gradient.addColorStop(0, "#005f73"); // Deep teal
-    gradient.addColorStop(1, "#005f73 "); // Lighter teal
+    gradient.addColorStop(0, "#8d2aeb"); // Deep teal
+    gradient.addColorStop(1, "#a65deb "); // Lighter teal
 
     canvas.width = canvas.width; // Clear canvas for new frame
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
     // Create a rounded, flowing shape by varying the radius subtly
-
-    for (let angle = 0; angle <= Math.PI * 2; angle += 0.01) {
+    let speed = 10;
+    for (let angle = -1; angle <= Math.PI * 2; angle += 0.01) {
         let smoothRandom =
-            Math.sin(angle * (3 + Math.random() * 0.005) + time) * 5 +
-            Math.cos(angle * (5 + Math.random() * 0.005) + time) * 5;
+            Math.sin(angle * (3 + Math.random() * 0.005) + time) * speed +
+            Math.cos(angle * (5 + Math.random() * 0.005) + time) * speed;
         let radius = baseSize + smoothRandom; // Incorporate the smoothed random factor
         let x = centerX + radius * Math.cos(angle);
         let y = centerY + radius * Math.sin(angle);
