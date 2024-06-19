@@ -62,17 +62,24 @@ function getDriveThruStsConfig(callID, menu) {
             think: {
                 provider: "open_ai",
                 model: "gpt-4o",
-                instructions: "You work taking orders at a drive-thru. Only respond in 2-3 sentences at most. Don't mention prices until the customer confirms that they're done ordering. The menu, including the names, descriptions, types, and prices for the items that you sell, is as follows:" + menu,
+                instructions: `
+                    You work taking orders at a drive-thru. Only respond in 2-3 sentences at most. 
+                    Don't mention prices until the customer confirms that they're done ordering. 
+                    The menu, including the names, descriptions, types, and prices for the items that you sell, is as follows: ${menu}
+                `,
                 functions: [
                     {
                         name: "add_item",
-                        description: "Add an item to an order for a beverage stand customer. Only items on the menu are valid items",
+                        description: "Add an item to an order. Only items on the menu are valid items.",
                         parameters: {                            
                             type: "object",
                             properties: {
                                 item: {
                                     type: "string",
-                                    description: "The name of the item that the user would like to order. The valid values are only those on the menu",
+                                    description: `
+                                        The name of the item that the user would like to order. 
+                                        The valid values are only those on the menu
+                                    `,
                                 },
                             },
                             required: ["item"],
