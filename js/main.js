@@ -1,11 +1,11 @@
-var audioContextOut = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: "interactive", sampleRate: 48000 });
-var audioContext = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: "interactive" });
-var startTime = -1;
+const audioContextOut = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: "interactive", sampleRate: 48000 });
+const audioContext = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: "interactive" });
+let startTime = -1;
 
 window.onload = function () {
   prepareDriveThruConfig();
-  var voice = document.getElementById("voice");
-  var model = document.getElementById("model");
+  const voice = document.getElementById("voice");
+  const model = document.getElementById("model");
   document.getElementById("startConversationBtn").addEventListener("click", () => {
     startConversaton(model, voice);
   });
@@ -13,13 +13,17 @@ window.onload = function () {
 
 function startConversaton(model, voice) {
   const config = configureSettings(model, voice);
-  var ws = new WebSocket("wss://sts.sandbox.deepgram.com/demo/agent");
+  let ws = new WebSocket("wss://sts.sandbox.deepgram.com/demo/agent");
   ws.binaryType = 'arraybuffer';
 
   ws.onopen = function () {
     console.log("WebSocket connection established.");
-    ws.send(JSON.stringify(config)); // Send initial config on connection
-    startStreaming(ws);
+    // Send initial config on connection
+    ws.send(JSON.stringify(config)); 
+    // Send the microphone audio to the websocket
+    captureAudio((data)=>{
+      ws.send(data);
+    });
   };
 
   ws.onerror = function (error) {
@@ -29,11 +33,13 @@ function startConversaton(model, voice) {
   ws.onmessage = function (event) {
     if (typeof event.data === "string") {
       console.log("Text message received:", event.data);
-      // Handle text messages here
+      // Handle text messages
       handleMessageEvent(event.data);
     } else if (event.data instanceof ArrayBuffer) {
+      // Update the animation
       updateBlobSize(0.25);
-      feedAudioData(event.data);
+      // Play the audio
+      receiveAudio(event.data);
     } else {
       console.error("Unsupported message format.");
     }
@@ -56,87 +62,6 @@ function startConversaton(model, voice) {
   });
 }
 
-function feedAudioData(audioData) {
-  // See https://stackoverflow.com/a/61481513 for tips on smooth playback
-
-  var audioDataView = new Int16Array(audioData);
-
-  if (audioDataView.length === 0) {
-    console.error("Received audio data is empty.");
-    return;
-  }
-
-  var audioBuffer = audioContextOut.createBuffer(
-    1,
-    audioDataView.length,
-    48000
-  ); // 1 channel, 48 kHz sample rate
-  var audioBufferChannel = audioBuffer.getChannelData(0);
-
-  // Copy audio data to the buffer
-  for (var i = 0; i < audioDataView.length; i++) {
-    audioBufferChannel[i] = audioDataView[i] / 32768; // Convert linear16 PCM to float [-1, 1]
-  }
-
-  var source = audioContextOut.createBufferSource();
-  source.buffer = audioBuffer;
-  source.connect(audioContextOut.destination);
-
-  if (startTime < audioContextOut.currentTime) {
-    startTime = audioContextOut.currentTime;
-  }
-  source.start(startTime);
-  startTime += audioBuffer.duration;
-}
-
-function startStreaming(ws) {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    console.error("getUserMedia is not supported in this browser.");
-    return;
-  }
-
-  // In the browser, run `navigator.mediaDevices.getSupportedConstraints()` to see your
-  // options here.
-  var constraints = {
-    audio: {
-      sampleRate: 48000,
-      channelCount: 1,
-      echoCancellation: true,
-      autoGainControl: true,
-      voiceIsolation: true,
-      noiseSuppression: false,
-      latency: 0,
-    },
-  };
-
-  navigator.mediaDevices
-    .getUserMedia(constraints)
-    .then(function (stream) {
-      var audioContext = new AudioContext();
-      var microphone = audioContext.createMediaStreamSource(stream);
-      var processor = audioContext.createScriptProcessor(4096, 1, 1);
-
-      processor.onaudioprocess = function (event) {
-        // console.log("sending audio data?");
-        var inputData = event.inputBuffer.getChannelData(0);
-        // update blob size based on audio level
-        var rms = Math.sqrt(
-          inputData.reduce((sum, value) => sum + value * value, 0) /
-          inputData.length
-        );
-        updateBlobSize(rms * 5); // Scale RMS value to control size
-
-        ws.send(inputData);
-      };
-
-      microphone.connect(processor);
-      processor.connect(audioContext.destination);
-    })
-    .catch(function (error) {
-      console.error("Error accessing microphone:", error);
-    });
-}
-
 function updateVoices(callback) {
   document.querySelectorAll(".circle-button").forEach((button) => {
     button.addEventListener("click", function () {
@@ -144,7 +69,7 @@ function updateVoices(callback) {
         .querySelector(".circle-button.selected")
         .classList.remove("selected");
       this.classList.add("selected");
-      var voice_selection = this.id;
+      const voice_selection = this.id;
       console.log("Voice selection changed to:", voice_selection);
 
       callback(voice_selection);
@@ -157,13 +82,13 @@ function updateInstructions(callback) {
   document
     .getElementById("updateInstructionsBtn")
     .addEventListener("click", function () {
-      var instructions = document.getElementById("instructionsInput").value;
+      let instructions = document.getElementById("instructionsInput").value;
       callback(instructions);
     });
 }
 
 function updateMenu(){
-  let itemsDiv = document.querySelector('#items');
+  const itemsDiv = document.querySelector('#items');
   state.menu.items.forEach((item) => {
     let itemLi = document.createElement('li');
     itemLi.innerHTML = item.name + ' - $' + item.price;
@@ -181,17 +106,18 @@ function updateUI() {
 }
 
 function configureSettings(model, voice) {
-  var voice = voice.options[voice.selectedIndex].value;
-  var providerAndModel = model.options[model.selectedIndex].value.split("+");
+  const voiceSelection = voice.options[voice.selectedIndex].value;
+  const providerAndModel = model.options[model.selectedIndex].value.split("+");
+
   // Configuration settings for the agent
-  var config_settings = getDriveThruStsConfig(state.callID, JSON.stringify(Object.values(state.menu)));
+  let config_settings = getDriveThruStsConfig(state.callID, JSON.stringify(Object.values(state.menu)));
   config_settings.agent.think.provider = providerAndModel[0];
   config_settings.agent.think.model = providerAndModel[1];
   console.log('config_settings', JSON.stringify(config_settings))
 
   // Update the text area to match the initial instructions
   document.getElementById("instructionsInput").value = config_settings.agent.think.instructions;
-  document.getElementById(voice).classList.add("selected");
+  document.getElementById(voiceSelection).classList.add("selected");
   return config_settings;
 }
 
@@ -221,7 +147,7 @@ async function handleMessageEvent(){
           total += item.qty * item.price;
       });
       let orderTotal = document.querySelector('#orderTotal');
-      orderTotal.innerHTML = '$' + total;
+      orderTotal.innerHTML = '$' + total.toFixed(2);
   }
 }
 

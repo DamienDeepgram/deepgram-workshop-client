@@ -1,22 +1,26 @@
 // Blob animation setup
-var targetAudioLevel = 0;
-var audioLevel = 0;
+let targetAudioLevel = 0;
+let audioLevel = 0;
 
 function updateBlobSize(level) {
     targetAudioLevel = level; // Set the new target level
 }
 
 function animateBlob() {
-    var canvas = document.getElementById("blobCanvas");
-    var ctx = canvas.getContext("2d");
-    var time = performance.now() * 0.001;
+    const canvas = document.getElementById("blobCanvas");
+    const ctx = canvas.getContext("2d");
+    const time = performance.now() * 0.001;
+
     // Smoothing the transition by moving audioLevel towards targetAudioLevel
     audioLevel += (targetAudioLevel - audioLevel) * 0.05;
-    var centerX = canvas.width / 2;
-    var centerY = canvas.height / 2;
-    var baseSize = 200 + audioLevel * 100; // Adjust base size based on audio level
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    // Adjust base size based on audio level
+    const baseSize = 200 + audioLevel * 100; 
+
     // Create a gradient from deep teal to lighter teal
-    var gradient = ctx.createRadialGradient(
+    const gradient = ctx.createRadialGradient(
         centerX,
         centerY,
         baseSize * 0.00005,
@@ -27,18 +31,20 @@ function animateBlob() {
     gradient.addColorStop(0, "#8d2aeb"); // Deep teal
     gradient.addColorStop(1, "#a65deb "); // Lighter teal
 
-    canvas.width = canvas.width; // Clear canvas for new frame
+    // Clear canvas for new frame
+    canvas.width = canvas.width; 
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
+
     // Create a rounded, flowing shape by varying the radius subtly
-    let speed = 10;
+    const speed = 10;
     for (let angle = -1; angle <= Math.PI * 2; angle += 0.01) {
         let smoothRandom =
             Math.sin(angle * (3 + Math.random() * 0.005) + time) * speed +
             Math.cos(angle * (5 + Math.random() * 0.005) + time) * speed;
-        let radius = baseSize + smoothRandom; // Incorporate the smoothed random factor
-        let x = centerX + radius * Math.cos(angle);
-        let y = centerY + radius * Math.sin(angle);
+        const radius = baseSize + smoothRandom; // Incorporate the smoothed random factor
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
         ctx.lineTo(x, y);
     }
 
