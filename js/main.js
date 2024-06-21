@@ -121,7 +121,11 @@ function configureSettings(model, voice) {
   return config_settings;
 }
 
-async function handleMessageEvent(){
+async function handleMessageEvent(data){
+  let msgObj = JSON.parse(data);
+  if (msgObj["type"] === "UserStartedSpeaking") {
+    clearScheduledAudio();
+  }
   if (!state.callID || state.status === 'sleeping') return;
 
   const order = await service.getOrder(state.callID);

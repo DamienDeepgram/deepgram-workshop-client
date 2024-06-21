@@ -1,3 +1,5 @@
+let scheduledAudioSources = [];
+
 function receiveAudio(audioData) {
 	// See https://stackoverflow.com/a/61481513 for tips on smooth playback
 
@@ -31,6 +33,9 @@ function receiveAudio(audioData) {
 	}
 	source.start(startTime);
 	startTime += audioBuffer.duration;
+
+	// Buffer
+	scheduledAudioSources.push(source);
 }
 
 function captureAudio(callback) {
@@ -77,4 +82,20 @@ function captureAudio(callback) {
 		.catch(function (error) {
 			console.error("Error accessing microphone:", error);
 		});
+}
+
+function clearScheduledAudio() {
+	scheduledAudioSources.forEach(source => {
+	  source.stop();
+	})
+	scheduledAudioSources = [];
+
+	let scheduledAudioMs = Math.round(1000*(startTime - audioContextOut.currentTime));
+	if (scheduledAudioMs > 0) {
+	  console.log(`Cleared ${scheduledAudioMs}ms of scheduled audio`);
+	} else {
+	  console.log("No scheduled audio to clear.");
+	}
+
+	startTime = -1;
 }
