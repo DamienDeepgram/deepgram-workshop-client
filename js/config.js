@@ -11,8 +11,8 @@ const baseConfig = {
     type: "SettingsConfiguration",
     audio: {
         input: {
-            encoding: "linear32",
-            sample_rate: 48000
+            encoding: "linear16",
+            sample_rate: 16000
           },
           output: {
             encoding: "linear16",

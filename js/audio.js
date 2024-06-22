@@ -47,7 +47,7 @@ function captureAudio(callback) {
 	// In the browser, run `navigator.mediaDevices.getSupportedConstraints()` to see your options here if needed
 	const constraints = {
 		audio: {
-			sampleRate: 48000,
+			sampleRate: 16000,
 			channelCount: 1,
 			echoCancellation: true,
 			autoGainControl: true,
@@ -73,7 +73,8 @@ function captureAudio(callback) {
 					inputData.length
 				);
 				updateBlobSize(rms * 5); // Scale RMS value to control size
-				callback(inputData)
+				var downsampledData = downsample(inputData, 48000, 16000);
+				callback(convertFloat32ToInt16(downsampledData))
 			};
 
 			microphone.connect(processor);
@@ -98,4 +99,42 @@ function clearScheduledAudio() {
 	}
 
 	startTime = -1;
+}
+
+function downsample(buffer, fromSampleRate, toSampleRate) {
+	if (fromSampleRate === toSampleRate) {
+		return buffer;
+	}
+	var sampleRateRatio = fromSampleRate / toSampleRate;
+	var newLength = Math.round(buffer.length / sampleRateRatio);
+	var result = new Float32Array(newLength);
+	var offsetResult = 0;
+	var offsetBuffer = 0;
+	while (offsetResult < result.length) {
+		var nextOffsetBuffer = Math.round(
+			(offsetResult + 1) * sampleRateRatio
+		);
+		var accum = 0, count = 0;
+		for (
+			var i = offsetBuffer;
+			i < nextOffsetBuffer && i < buffer.length;
+			i++
+		) {
+			accum += buffer[i];
+			count++;
+		}
+		result[offsetResult] = accum / count;
+		offsetResult++;
+		offsetBuffer = nextOffsetBuffer;
+	}
+	return result;
+}
+
+function convertFloat32ToInt16(buffer) {
+	var l = buffer.length;
+	var buf = new Int16Array(l);
+	while (l--) {
+		buf[l] = Math.min(1, buffer[l]) * 0x7fff;
+	}
+	return buf.buffer;
 }
