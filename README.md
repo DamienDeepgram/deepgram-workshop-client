@@ -11,7 +11,7 @@ Simple web interface for the Deepgram Voice AI Agent API showing a simple menu o
 ## Installation
 
 ```
-npm -g http-server
+npm install -g http-server
 ```
 
 ## Running
