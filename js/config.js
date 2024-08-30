@@ -27,41 +27,14 @@ const baseConfig = {
     },
 }
 
-const stsConfig = {
-    ...baseConfig,
-    agent: {
-        ...baseConfig.agent,
-        think: {
-            provider: "anthropic",
-            model: "claude-3-haiku-20240307",
-            instructions:
-                `
-                ## Base instructions
-                You are a helpful voice assistant made by Deepgram's engineers. 
-                Respond in a friendly, human, conversational manner. 
-                YOU MUST answer in 1-2 sentences at most. 
-                Ask follow up questions. 
-                Ask one question at a time.
-                Your messages should have no more than than 120 characters.
-                Keep responses unique and free of repetition.
-                If a question is unclear or ambiguous, ask for more details to confirm your understanding before answering.
-                If someone asks how you are, or how you are feeling, tell them.
-                Deepgram gave you a mouth and ears so you can take voice as an input. You can listen and speak.
-                Your name is Voicebot. 
-                `,
-        },
-    },
-};
-
-
 function getDriveThruStsConfig(callID, menu) {
     return {
         ...baseConfig,
         agent: {
             ...baseConfig.agent,
             think: {
-                provider: "open_ai",
-                model: "gpt-4o",
+                provider: "groq",
+                model: "llama3-70b-8192",
                 instructions: `
                     You work taking orders at a drive-thru. Only respond in 2-3 sentences at most. 
                     Don't mention prices until the customer confirms that they're done ordering. 

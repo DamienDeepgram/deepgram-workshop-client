@@ -13,7 +13,7 @@ window.onload = function () {
 
 function startConversaton(model, voice) {
   const config = configureSettings(model, voice);
-  let ws = new WebSocket("wss://sts.sandbox.deepgram.com/demo/agent");
+  let ws = new WebSocket("wss://sts-demo.deepgram.com/agent");
   ws.binaryType = 'arraybuffer';
 
   ws.onopen = function () {
