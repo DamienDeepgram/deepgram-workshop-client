@@ -33,7 +33,9 @@ function getDriveThruStsConfig(callID, menu) {
         agent: {
             ...baseConfig.agent,
             think: {
-                provider: "groq",
+                provider: {
+                    type: "groq",
+                },
                 model: "llama3-70b-8192",
                 instructions: `
                     You work taking orders at a drive-thru. Only respond in 2-3 sentences at most. 
