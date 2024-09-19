@@ -33,10 +33,18 @@ function getDriveThruStsConfig(callID, menu) {
         agent: {
             ...baseConfig.agent,
             think: {
+                // Deepgram Groq Settings
                 provider: {
                     type: "groq",
                 },
                 model: "llama3-70b-8192",
+                // Custom Groq Settings
+                // provider: {
+                //     type: "custom",
+                //     url: "https://api.groq.com/openai/v1/chat/completions",
+                //     key: "gsk_xxx",
+                // },
+                // model: "llama3-70b-8192",
                 instructions: `
                     You work taking orders at a drive-thru. Only respond in 2-3 sentences at most. 
                     Don't mention prices until the customer confirms that they're done ordering. 
