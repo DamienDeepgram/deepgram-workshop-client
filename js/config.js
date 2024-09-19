@@ -38,13 +38,26 @@ function getDriveThruStsConfig(callID, menu) {
                     type: "groq",
                 },
                 model: "llama3-70b-8192",
+
                 // Custom Groq Settings
                 // provider: {
                 //     type: "custom",
                 //     url: "https://api.groq.com/openai/v1/chat/completions",
                 //     key: "gsk_xxx",
                 // },
+
+                // Custom Groq Models
+                // model: "llama3-8b-8192",
                 // model: "llama3-70b-8192",
+                // model: "mixtral-8x7b-32768",
+                // model: "gemma2-9b-it",
+                // model: "gemma-7b-it",
+                // model: "llama3-groq-70b-8192-tool-use-preview",
+                // model: "llama3-groq-8b-8192-tool-use-preview",
+                // model: "llama-3.1-70b-versatile",
+                // model: "llama-3.1-8b-instant",
+                // model: "llama-guard-3-8b",
+                // model: "llava-v1.5-7b-4096-preview",
                 instructions: `
                     You work taking orders at a drive-thru. Only respond in 2-3 sentences at most. 
                     Don't mention prices until the customer confirms that they're done ordering. 

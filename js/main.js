@@ -9,6 +9,16 @@ window.onload = function () {
   document.getElementById("startConversationBtn").addEventListener("click", () => {
     startConversaton(model, voice);
   });
+
+  let config_settings = getDriveThruStsConfig('1', []);
+
+  // Only update the settings if a non-custom LLM is being used
+  if(config_settings.agent.think.provider.type == 'custom'){
+    let modelSelect = document.getElementById('model');
+    modelSelect.setAttribute('disabled', true);
+    modelSelect.options.length = 0;
+    modelSelect.options.add(new Option('Custom Model', ''));
+  }
 };
 
 function startConversaton(model, voice) {
@@ -111,8 +121,14 @@ function configureSettings(model, voice) {
 
   // Configuration settings for the agent
   let config_settings = getDriveThruStsConfig(state.callID, JSON.stringify(Object.values(state.menu)));
-  config_settings.agent.think.provider.type = providerAndModel[0];
-  config_settings.agent.think.model = providerAndModel[1];
+
+  // Only update the settings if a non-custom LLM is being used
+  if(config_settings.agent.think.provider.type != 'custom'){
+    config_settings.agent.think.provider.type = providerAndModel[0];
+    config_settings.agent.think.model = providerAndModel[1];
+  } else {
+
+  }
   console.log('config_settings', JSON.stringify(config_settings))
 
   // Update the text area to match the initial instructions
