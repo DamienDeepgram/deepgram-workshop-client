@@ -10,6 +10,7 @@ window.onload = function () {
     startConversaton(model, voice);
   });
 
+  // Get a dummy config to check if a custom LLM is being used
   let config_settings = getDriveThruStsConfig('1', []);
 
   // Only update the settings if a non-custom LLM is being used
