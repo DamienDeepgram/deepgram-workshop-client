@@ -1,3 +1,5 @@
+const BASE_URL = 'https://deepgram-workshop-server.glitch.me';
+
 const state = {
     status: 'awake',
     callID: null,
@@ -6,7 +8,6 @@ const state = {
     initializedDriveThru: false
 };
 
-const BASE_URL = 'https://deepgram-workshop-server.glitch.me';
 const baseConfig = {
     type: "SettingsConfiguration",
     audio: {

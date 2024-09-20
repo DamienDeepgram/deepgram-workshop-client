@@ -175,7 +175,7 @@ async function handleMessageEvent(data){
 async function prepareDriveThruConfig() {
   state.initializedDriveThru = true;
   try {
-    await service.deleteMenu();state.consolidatedOrder
+    await service.deleteMenu();
     const menuPromises = driveThruMenu.map((item) => service.addToMenu(item));
     await Promise.all(menuPromises);
     state.callID = await service.getCallID();
