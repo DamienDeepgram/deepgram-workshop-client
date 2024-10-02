@@ -24,7 +24,7 @@ window.onload = function () {
 
 function startConversaton(model, voice) {
   const config = configureSettings(model, voice);
-  let ws = new WebSocket("wss://sts-demo.deepgram.com/agent");
+  let ws = new WebSocket("wss://agent.deepgram.com/agent", ["token", "<your-api-key-here>"]);
   ws.binaryType = 'arraybuffer';
 
   ws.onopen = function () {
