@@ -63,5 +63,18 @@ const service = {
   
       const orderJSON = await order.json();
       return orderJSON.items;
+    },
+
+    getAgent: async (callID) => {
+      const call = await fetch(`${BASE_URL}/calls/${callID}/agent`, {
+        method: "GET",
+        headers: this.headers,
+      });
+      if (!call.ok) {
+        throw new Error("Failed to get order");
+      }
+  
+      const callJson = await call.json()
+      return callJson.agent;
     }
   }

@@ -1,6 +1,8 @@
 const audioContextOut = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: "interactive", sampleRate: 48000 });
 const audioContext = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: "interactive" });
 let startTime = -1;
+let currentAgent = null;
+let ws = null;
 
 window.onload = function () {
   prepareDriveThruConfig();
@@ -24,7 +26,7 @@ window.onload = function () {
 
 function startConversaton(model, voice) {
   const config = configureSettings(model, voice);
-  let ws = new WebSocket("wss://agent.deepgram.com/agent", ["token", "<your-api-key-here>"]);
+  ws = new WebSocket("wss://agent.deepgram.com/agent", ["token", "f1e75452fbafeaaf1e4ee5a2b424e84336d0fb04"]);
   ws.binaryType = 'arraybuffer';
 
   ws.onopen = function () {
@@ -146,6 +148,26 @@ async function handleMessageEvent(data){
   if (!state.callID || state.status === 'sleeping') return;
 
   const order = await service.getOrder(state.callID);
+  const agent = await service.getAgent(state.callID);
+  if(currentAgent != agent){
+    currentAgent = agent;
+    console.log('Agent changed to:', agent);
+    if(currentAgent.toLowerCase() == 'mcdonalds'){
+      ws.send(JSON.stringify({
+        "type": "UpdateInstructions",
+        "instructions": `You can change agent at anytime by saying "Change agent to [agent name]".
+                      Possible Agent Names are: Crusty Crab, McDonalds, KFC, Burger King, Cat
+                      You work taking orders at a drive-thru. Only respond in 2-3 sentences at most. 
+                      Don't mention prices until the customer confirms that they're done ordering. 
+                      The menu, including the names, descriptions, types, and prices for the items that you sell, is as follows: Big Mac, Quarter Pounder, Chicken Nuggets, McFlurry, Apple Pie`
+      }));
+    } else if(currentAgent.toLowerCase() == 'cat'){
+      ws.send(JSON.stringify({
+        "type": "UpdateInstructions",
+        "instructions": `you are a cat act like a cat`
+      }));
+    }
+  }
   if (order) {
       // Consolidate order needed because sometimes server can send back duplicate items
       state.consolidatedOrder = order.reduce((acc, item) => {

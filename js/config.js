@@ -35,16 +35,20 @@ function getDriveThruStsConfig(callID, menu) {
             ...baseConfig.agent,
             think: {
                 // Deepgram Groq Settings
+                // provider: {
+                //     type: "groq",
+                // },
+                // model: "llama3-8b-8192",
                 provider: {
-                    type: "groq",
+                    type: "open_ai",
                 },
-                model: "llama3-70b-8192",
+                model: "gpt-4o-mini",
 
                 // Custom Groq Settings
                 // provider: {
                 //     type: "custom",
                 //     url: "https://api.groq.com/openai/v1/chat/completions",
-                //     key: "gsk_xxx",
+                //     key: "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",
                 // },
 
                 // Custom Groq Models
@@ -60,6 +64,9 @@ function getDriveThruStsConfig(callID, menu) {
                 // model: "llama-guard-3-8b",
                 // model: "llava-v1.5-7b-4096-preview",
                 instructions: `
+                    You can change agent at anytime by saying "Change agent to [agent name]".
+                    Possible Agent Names are: Crusty Crab, McDonalds, KFC, Burger King, Cat
+                    Your default agent is Crusty Crab.
                     You work taking orders at a drive-thru. Only respond in 2-3 sentences at most. 
                     Don't mention prices until the customer confirms that they're done ordering. 
                     The menu, including the names, descriptions, types, and prices for the items that you sell, is as follows: ${menu}
@@ -82,6 +89,24 @@ function getDriveThruStsConfig(callID, menu) {
                             required: ["item"],
                         },
                         url: BASE_URL + "/calls/" + callID + "/order/items",
+                        method: "post",   
+                    },
+                    {
+                        name: "change_agent",
+                        description: "Change the agent who is currently handling the call",
+                        parameters: {                            
+                            type: "object",
+                            properties: {
+                                agent: {
+                                    type: "string",
+                                    description: `
+                                        The name of the agent to hand the call off to.
+                                    `,
+                                },
+                            },
+                            required: ["agent"],
+                        },
+                        url: BASE_URL + "/calls/" + callID + "/agent",
                         method: "post",   
                     }
                 ],
