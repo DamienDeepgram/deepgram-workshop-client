@@ -48,7 +48,7 @@ function getDriveThruStsConfig(callID, menu) {
                 // provider: {
                 //     type: "custom",
                 //     url: "https://api.groq.com/openai/v1/chat/completions",
-                //     key: "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",
+                //     key: "",
                 // },
 
                 // Custom Groq Models
